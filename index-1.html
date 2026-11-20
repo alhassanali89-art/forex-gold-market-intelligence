@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>Forex & Gold Market Intelligence</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#121d2e;--panel2:#18263a;--line:#26364d;--text:#e8eef8;--muted:#9aabc1;--green:#31c48d;--red:#ff6978;--gold:#e9b949;--blue:#78a9ff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(150deg,#0b1220,#101b2c 60%,#0b1220);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:22px max(18px,calc((100% - 1160px)/2));border-bottom:1px solid var(--line);background:#0c1524dd;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#d6a83f,#f4d47d);display:grid;place-items:center;color:#152033;font-weight:900;font-size:20px}
+h1{font-size:19px;margin:0}header p{margin:2px 0 0;color:var(--muted);font-size:12px}
+main{max-width:1160px;margin:24px auto;padding:0 16px 48px}.notice{border:1px solid #665326;background:#302817;color:#f3dfaa;padding:12px 14px;border-radius:12px;margin-bottom:18px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{background:linear-gradient(160deg,var(--panel),#101a29);border:1px solid var(--line);border-radius:15px;padding:16px;min-width:0}.metric-label{color:var(--muted);font-size:12px}.metric{font-size:24px;font-weight:750;margin-top:4px}.sub{font-size:12px;color:var(--muted)}
+section{margin-top:18px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}h2{font-size:16px;margin:0}.pill{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}tr:last-child td{border-bottom:0}.up{color:var(--green)}.down{color:var(--red)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.controls{display:flex;flex-wrap:wrap;gap:9px;margin-top:10px}
+button,.filebtn{background:#233650;color:var(--text);border:1px solid #38506e;border-radius:9px;padding:10px 13px;font:inherit;font-size:13px;cursor:pointer}button.primary{background:#d7ad4b;color:#172033;border-color:#d7ad4b;font-weight:700}button:hover,.filebtn:hover{filter:brightness(1.12)}
+input,select,textarea{background:#0c1625;border:1px solid var(--line);border-radius:9px;color:var(--text);padding:10px;width:100%;font:inherit;font-size:13px}label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.result{margin-top:12px;background:#0c1625;border:1px solid var(--line);border-radius:10px;padding:12px;white-space:pre-wrap;font-size:13px;color:#dce7f6;min-height:48px}
+.signal{border-left:3px solid var(--gold);padding:10px 12px;background:#0d1828;border-radius:7px;margin-top:9px}.signal.buy{border-color:var(--green)}.signal.sell{border-color:var(--red)}
+small,.muted{color:var(--muted)}footer{color:var(--muted);font-size:12px;text-align:center;margin-top:25px}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}header{position:static}}
+@media(max-width:420px){.metric{font-size:20px}.formgrid{grid-template-columns:1fr}th,td{padding:9px 5px;font-size:12px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">FX</div><div><h1>Forex & Gold Market Intelligence</h1><p>Technical analysis workspace · XAUUSD & major FX pairs</p></div></div></header>
+<main>
+<div class="notice" id="topNotice"><strong>Connected-data test build:</strong> Forex prices can be requested from your Supabase Edge Function after you add your Supabase legacy anon key below. Gold, news, AI interpretation, WhatsApp account connection, push notifications and broker execution are not connected. Sample values remain clearly marked until replaced by provider data. This tool does not provide guaranteed trading outcomes.</div>
+<section class="card" id="liveConnect">
+ <div class="section-head"><h2>Live Forex data connection</h2><span class="pill" id="connectionBadge">Not configured</span></div>
+ <p class="sub">Enter your Supabase project's <strong>publishable key</strong> (or legacy anon key) to let this public website call the <code>forex-price</code> Edge Function. Never enter a service_role or secret key here.</p>
+ <label for="supabaseKey">Supabase publishable / anon key</label>
+ <input id="supabaseKey" type="password" autocomplete="off" placeholder="Paste your legacy anon key (JWT)">
+ <div class="controls"><button class="primary" id="saveKey">Save key on this device</button><button id="fetchPrices">Fetch Forex prices</button></div>
+ <div class="result" id="liveResult" aria-live="polite">Not connected yet. Add the legacy anon key, save it, then fetch prices.</div>
+ <p class="sub">Prices are provider snapshots, not guaranteed executable broker quotes. The free provider allowance/rate limit applies.</p>
+</section>
+<div class="grid">
+ <div class="card"><div class="metric-label">Tracked markets</div><div class="metric">7</div><div class="sub">Major FX pairs; Gold feed pending</div></div>
+ <div class="card"><div class="metric-label">Analysis timeframe</div><div class="metric">M15</div><div class="sub">Change when analysing CSV</div></div>
+ <div class="card"><div class="metric-label">Signals generated</div><div class="metric" id="signalCount">0</div><div class="sub">From uploaded OHLC data</div></div>
+ <div class="card"><div class="metric-label">Data status</div><div class="metric" id="dataStatus">Not connected</div><div class="sub" id="dataStatusSub">Configure the Forex feed above</div></div>
+</div>
+<section class="card">
+ <div class="section-head"><h2>Market watchlist</h2><span class="pill" id="watchlistBadge">Sample values · not live</span></div>
+ <div style="overflow-x:auto"><table><thead><tr><th>Symbol</th><th>Price</th><th>Data</th><th>Market</th></tr></thead><tbody>
+ <tr><td><strong>XAUUSD</strong></td><td id="price-XAUUSD">—</td><td id="source-XAUUSD">Gold feed not connected</td><td>Gold</td></tr>
+ <tr><td>EURUSD</td><td id="price-EURUSD">1.08500</td><td id="source-EURUSD">Sample · not live</td><td>Forex</td></tr>
+ <tr><td>GBPUSD</td><td id="price-GBPUSD">1.27000</td><td id="source-GBPUSD">Sample · not live</td><td>Forex</td></tr>
+ <tr><td>USDJPY</td><td id="price-USDJPY">155.000</td><td id="source-USDJPY">Sample · not live</td><td>Forex</td></tr>
+ <tr><td>USDCHF</td><td id="price-USDCHF">0.90000</td><td id="source-USDCHF">Sample · not live</td><td>Forex</td></tr>
+ <tr><td>AUDUSD</td><td id="price-AUDUSD">0.66000</td><td id="source-AUDUSD">Sample · not live</td><td>Forex</td></tr>
+ <tr><td>USDCAD</td><td id="price-USDCAD">—</td><td id="source-USDCAD">Not fetched</td><td>Forex</td></tr>
+ <tr><td>NZDUSD</td><td id="price-NZDUSD">—</td><td id="source-NZDUSD">Not fetched</td><td>Forex</td></tr>
+ </tbody></table></div>
+</section>
+<section class="two">
+ <div class="card">
+  <div class="section-head"><h2>Technical signal analyser</h2><span class="pill">Rule-based</span></div>
+  <p class="sub">Upload a CSV containing chronological OHLC candles. Required columns: time, open, high, low, close. Volume is optional. Use one timeframe per file.</p>
+  <label for="symbol">Symbol</label><input id="symbol" value="XAUUSD" placeholder="e.g. XAUUSD">
+  <label for="tf">Timeframe represented by this file</label><select id="tf"><option>M5</option><option selected>M15</option><option>M30</option><option>H1</option><option>H4</option><option>D1</option></select>
+  <label for="csv">OHLC CSV file</label><input type="file" id="csv" accept=".csv,text/csv">
+  <div class="controls"><button class="primary" id="analyse">Analyse candles</button><button id="sample">Load sample candles</button></div>
+  <div id="analysisResult" class="result">No candle data analysed yet.</div>
+ </div>
+ <div class="card">
+  <div class="section-head"><h2>WhatsApp group export analyser</h2><span class="pill">Manual import only</span></div>
+  <p class="sub">Import a WhatsApp chat exported as a .txt file. The parser looks for explicit BUY/SELL mentions; it does not connect to WhatsApp or verify the group's claims.</p>
+  <label for="waFile">WhatsApp .txt export</label><input type="file" id="waFile" accept=".txt,text/plain">
+  <label for="waText">Or paste chat text</label><textarea id="waText" rows="5" placeholder="Paste exported messages here..."></textarea>
+  <div class="controls"><button class="primary" id="parseWA">Analyse messages</button></div>
+  <div id="waResult" class="result">No messages imported.</div>
+ </div>
+</section>
+<section class="card">
+ <div class="section-head"><h2>Generated signal log</h2><span class="pill">This browser session</span></div>
+ <div id="signals"><p class="sub">Signals generated from uploaded sample or CSV data will appear here.</p></div>
+</section>
+<section class="card">
+ <h2>How the prototype analyses candles</h2>
+ <p class="sub">It calculates EMA 20/50/200, RSI 14, MACD direction and ATR 14 from the uploaded close/high/low values. Its simple rules produce an educational directional indication, not a validated trading strategy. It does not check spread, slippage, execution quality, economic events or higher-timeframe confirmation.</p>
+</section>
+<footer>Forex & Gold Market Intelligence · Supabase-connected Forex price test build · Use at your own risk</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);let candles=[],signalLog=[];
+const SUPABASE_FUNCTION_URL="https://ebbpkowdbrgimfsdxqlv.supabase.co/functions/v1/forex-price";
+const forexSymbols=["EUR/USD","GBP/USD","USD/JPY","USD/CHF","AUD/USD","USD/CAD","NZD/USD"];
+function setConnection(ok,message){$("connectionBadge").textContent=ok?"Function responding":"Connection issue";$("connectionBadge").style.color=ok?"var(--green)":"var(--red)";$("dataStatus").textContent=ok?"Connected":"Error";$("dataStatusSub").textContent=message;}
+const savedPublicKey=localStorage.getItem("supabase_public_key");if(savedPublicKey){$("supabaseKey").value=savedPublicKey;$("connectionBadge").textContent="Key saved on this device";}
+$("saveKey").onclick=()=>{const key=$("supabaseKey").value.trim();if(!key){$("liveResult").textContent="Paste your Supabase legacy anon key first.";return;}if(key.startsWith("sb_secret_")||key.includes("service_role")){ $("liveResult").textContent="Security warning: this looks like a secret/service_role key. Do not use it in a public website. Find the legacy anon key instead.";return;}localStorage.setItem("supabase_public_key",key);$("liveResult").textContent="Publishable/anon key saved in this browser only. Tap Fetch Forex prices to test the function.";$("connectionBadge").textContent="Key saved on this device";};
+function wait(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+$("fetchPrices").onclick=async()=>{const key=$("supabaseKey").value.trim()||localStorage.getItem("supabase_public_key");if(!key){$("liveResult").textContent="Add your Supabase legacy anon key and tap Save key on this device first.";return;}if(key.startsWith("sb_secret_")||key.includes("service_role")){ $("liveResult").textContent="Do not use a secret/service_role key in this public website. Replace it with the legacy anon key.";return;}
+ const button=$("fetchPrices");button.disabled=true;const results=[];$("liveResult").textContent="Requesting provider prices. The free plan rate limit means requests are spaced out; please keep this page open.";
+ try{for(let i=0;i<forexSymbols.length;i++){const symbol=forexSymbols[i];if(i>0)await wait(8500);const url=new URL(SUPABASE_FUNCTION_URL);url.searchParams.set("symbol",symbol);const response=await fetch(url.toString(),{method:"GET",headers:{"apikey":key,"Authorization":"Bearer "+key}});let data={};try{data=await response.json();}catch(_e){}if(!response.ok||!data.success||!data.price){results.push(symbol+": ERROR — "+(data.error||data.message||("HTTP "+response.status)));$("source-"+symbol.replace("/","" )).textContent="Fetch error";}else{const compact=symbol.replace("/","");$("price-"+compact).textContent=Number(data.price).toLocaleString(undefined,{maximumFractionDigits:6});$("source-"+compact).textContent="Twelve Data · retrieved "+new Date(data.retrievedAt||Date.now()).toLocaleTimeString();results.push(symbol+": "+data.price+" (success)");}}
+ setConnection(results.some(x=>x.includes("success")),"Forex provider request completed; check individual rows for errors.");$("watchlistBadge").textContent="Forex provider data · snapshot";$("liveResult").textContent=results.join("\n")+"\n\nXAUUSD remains unavailable until a Gold data source is integrated.";
+ }catch(error){setConnection(false,"Request failed");$("liveResult").textContent="Network/function request failed: "+error.message+". Check the function URL, key type, and Supabase function logs.";}finally{button.disabled=false;}};
+
+function parseCSV(text){const lines=text.trim().split(/\r?\n/);if(lines.length<3)throw Error("CSV needs a header and at least two candle rows.");const headers=lines[0].split(",").map(x=>x.trim().toLowerCase());const idx=k=>headers.findIndex(h=>h===k||h.includes(k));let oi=idx("open"),hi=idx("high"),li=idx("low"),ci=idx("close"),ti=idx("time");if([oi,hi,li,ci].some(x=>x<0))throw Error("Required columns not found. Use time,open,high,low,close.");return lines.slice(1).map(line=>{const a=line.split(",");return {time:ti>=0?a[ti]:"",open:+a[oi],high:+a[hi],low:+a[li],close:+a[ci]}}).filter(c=>[c.open,c.high,c.low,c.close].every(Number.isFinite));}
+function ema(vals,n){let k=2/(n+1),out=[];vals.forEach((v,i)=>out.push(i? v*k+out[i-1]*(1-k):v));return out;}
+function rsi(vals,n=14){if(vals.length<n+1)return null;let gains=0,loss=0;for(let i=vals.length-n;i<vals.length;i++){let d=vals[i]-vals[i-1];if(d>0)gains+=d;else loss-=d;}if(loss===0)return 100;let rs=(gains/n)/(loss/n);return 100-100/(1+rs);}
+function atr(data,n=14){if(data.length<n+1)return null;let tr=[];for(let i=1;i<data.length;i++)tr.push(Math.max(data[i].high-data[i].low,Math.abs(data[i].high-data[i-1].close),Math.abs(data[i].low-data[i-1].close)));return tr.slice(-n).reduce((a,b)=>a+b,0)/Math.min(n,tr.length);}
+function analyse(data){if(data.length<30)throw Error("Please provide at least 30 valid candles (more is better).");let c=data.map(x=>x.close),e20=ema(c,20).at(-1),e50=ema(c,50).at(-1),e200=ema(c,200).at(-1),r=rsi(c),a=atr(data),fast=ema(c,12),slow=ema(c,26),macd=fast.map((v,i)=>v-slow[i]).at(-1),prevMacd=fast.at(-2)-slow.at(-2),last=data.at(-1);let score=(last.close>e20?1:-1)+(e20>e50?1:-1)+(c.length>=200?(e50>e200?1:-1):0)+(macd>prevMacd?1:-1)+(r!==null?(r>50&&r<70?1:r<50&&r>30?-1:0):0);let dir=score>=2?"BUY":score<=-2?"SELL":"NEUTRAL";let entry=last.close,sl=a?entry+(dir==="BUY"?-1:1)*1.5*a:null,tp=a?entry+(dir==="BUY"?1:-1)*2*a:null;return {dir,entry,sl,tp,r,e20,e50,e200,macd,a,score};}
+function fmt(x){return x==null?"n/a":Number(x).toFixed(5)}
+function addSignal(s){signalLog.unshift(s);$("signalCount").textContent=signalLog.length;$("signals").innerHTML=signalLog.map(x=>`<div class="signal ${x.direction.toLowerCase()}"><strong>${x.direction} · ${escapeHTML(x.symbol)} · ${x.tf}</strong><div class="sub">Entry ${fmt(x.entry)} · SL ${fmt(x.sl)} · TP ${fmt(x.tp)} · ${x.when}</div><small>Rule score ${x.score}; illustrative, unvalidated signal</small></div>`).join("");}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+$("csv").addEventListener("change",async e=>{if(e.target.files[0])try{candles=parseCSV(await e.target.files[0].text());$("analysisResult").textContent=`Loaded ${candles.length} candles. Tap Analyse candles.`}catch(err){$("analysisResult").textContent=err.message}});
+$("analyse").onclick=()=>{try{if(!candles.length)throw Error("Choose a CSV or load sample candles first.");let a=analyse(candles),sym=$("symbol").value.trim().toUpperCase()||"UNKNOWN",tf=$("tf").value;let out=`${a.dir} · ${sym} · ${tf}\nLast close: ${fmt(a.entry)}\nEMA20: ${fmt(a.e20)} | EMA50: ${fmt(a.e50)} | EMA200: ${fmt(a.e200)}\nRSI14: ${fmt(a.r)} | ATR14: ${fmt(a.a)}\nMACD direction: ${a.macd>=0?"positive":"negative"}\nRule score: ${a.score}\nEntry: ${fmt(a.entry)}\nStop loss (1.5 × ATR): ${fmt(a.sl)}\nTake profit (2 × ATR): ${fmt(a.tp)}\n\nEducational rule-based output only; not financial advice.`;$("analysisResult").textContent=out;addSignal({direction:a.dir,symbol:sym,tf,entry:a.entry,sl:a.sl,tp:a.tp,score:a.score,when:new Date().toLocaleString()});}catch(e){$("analysisResult").textContent=e.message}};
+$("sample").onclick=()=>{candles=[];let p=2350;for(let i=0;i<240;i++){let o=p;p+=Math.sin(i/9)*.8+(i%7-3)*.12+.08;let c=p; candles.push({time:i,open:o,high:Math.max(o,c)+.6,low:Math.min(o,c)-.5,close:c});} $("analysisResult").textContent="Loaded 240 synthetic sample candles. These are generated examples, not historical or live market prices."};
+$("waFile").onchange=async e=>{if(e.target.files[0])$("waText").value=await e.target.files[0].text()};
+$("parseWA").onclick=()=>{let t=$("waText").value.trim();if(!t){$("waResult").textContent="Paste or select a WhatsApp .txt export first.";return}let lines=t.split(/\r?\n/),hits=lines.filter(l=>/\b(buy|sell|long|short)\b/i.test(l));$("waResult").textContent=`Imported ${lines.length} lines. Found ${hits.length} lines containing BUY/SELL/LONG/SHORT terms.\n\n${hits.slice(0,30).map(x=>"• "+x).join("\n")||"No explicit direction terms found."}\n\nThese are keyword matches only, not verified signals. Compare group messages with independent market analysis.`};
+</script>
+</body></html>
