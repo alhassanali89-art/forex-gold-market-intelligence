@@ -89,7 +89,7 @@ small,.muted{color:var(--muted)}footer{color:var(--muted);font-size:12px;text-al
 <script>
 const $=id=>document.getElementById(id);let candles=[],signalLog=[];
 const SUPABASE_FUNCTION_URL="https://ebbpkowdbrgimfsdxqlv.supabase.co/functions/v1/forex-price";
-const forexSymbols=["EUR/USD","GBP/USD","USD/JPY","USD/CHF","AUD/USD","USD/CAD","NZD/USD"];
+const forexSymbols=["EUR/USD","GBP/USD","USD/JPY","USD/CHF","AUD/USD","USD/CAD","NZD/USD","XAU/USD"];
 function setConnection(ok,message){$("connectionBadge").textContent=ok?"Function responding":"Connection issue";$("connectionBadge").style.color=ok?"var(--green)":"var(--red)";$("dataStatus").textContent=ok?"Connected":"Error";$("dataStatusSub").textContent=message;}
 const savedPublicKey=localStorage.getItem("supabase_public_key");if(savedPublicKey){$("supabaseKey").value=savedPublicKey;$("connectionBadge").textContent="Key saved on this device";}
 $("saveKey").onclick=()=>{const key=$("supabaseKey").value.trim();if(!key){$("liveResult").textContent="Paste your Supabase legacy anon key first.";return;}if(key.startsWith("sb_secret_")||key.includes("service_role")){ $("liveResult").textContent="Security warning: this looks like a secret/service_role key. Do not use it in a public website. Find the legacy anon key instead.";return;}localStorage.setItem("supabase_public_key",key);$("liveResult").textContent="Publishable/anon key saved in this browser only. Tap Fetch Forex prices to test the function.";$("connectionBadge").textContent="Key saved on this device";};
